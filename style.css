@@ -165,7 +165,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   background: var(--hat);
   border-top: 1px solid rgba(0, 0, 0, 0.3);
 }
-/* 삼성중공업 작업자: 회색 작업복 + 안전모 */
+/* 블루씨중공업 작업자: 회색 작업복 + 안전모 */
 .sprite.worker { --body: #cfd2cc; box-shadow: inset -2px 0 0 #a9aca5, inset 0 3px 0 #232a3a; }
 /* 경비업체: 검은 제복 + 모자 */
 .sprite.guard { --body: #20242c; --skin: #c99a76; --hat: #0d0f12; --h: 27px; z-index: 2; box-shadow: inset 0 -8px 0 #14171c; }

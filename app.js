@@ -2,7 +2,7 @@
 
 const MAX_BYTES = 20 * 1024 * 1024;
 const ACCEPT_TYPES = ['image/jpeg', 'image/png', 'image/bmp'];
-const COMPANY = '삼성중공업';
+const COMPANY = '블루씨중공업';
 const DAY_QUOTA = 5;            // 하루 처리 건수 → 채우면 근무 종료
 const SAVE_KEY = 'paint-inspection-save-v1';
 const PAY = { salary: 10, arrestBonus: 5, rent: 20, food: 15, heat: 10 };
@@ -315,7 +315,7 @@ function pixelPainter(canvas) {
   return (x, y, w, h, color) => { ctx.fillStyle = color; ctx.fillRect(x, y, w, h); };
 }
 
-// 삼성중공업 작업자: 노란 안전모 + 회색 작업복 + 네이비 티셔츠 + 보안경
+// 블루씨중공업 작업자: 노란 안전모 + 회색 작업복 + 네이비 티셔츠 + 보안경
 function drawWorker(w, { sweat = false } = {}, canvas = els.portrait) {
   const r = pixelPainter(canvas);
   const SUIT = '#d6d8d2', SUIT_SHADE = '#b3b6af', SUIT_LINE = '#9a9d96';

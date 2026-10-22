@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>도장 검사소</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="game" id="game">
+
+    <!-- 상단: 검문소 전경 -->
+    <header class="checkpoint">
+      <div class="checkpoint-title">
+        <span class="title-ko">도장 검사소</span>
+        <span class="title-en">PAINT INSPECTION CHECKPOINT</span>
+      </div>
+      <!-- 대기 마당: 줄 선 작업자들, 경비대, 사이렌 -->
+      <div class="yard" id="yard" aria-hidden="true">
+        <div class="yard-gate"><span class="beacon"></span></div>
+        <div class="yard-barrier"></div>
+        <div class="guardhouse"><span>경비</span><i class="door"></i></div>
+        <span class="sprite guard" style="left: 12px; bottom: 58px"></span>
+        <span class="sprite guard" style="left: 52px; bottom: 58px"></span>
+      </div>
+      <div class="tally">
+        <div class="tally-day" id="day">DAY</div>
+        <div class="tally-row"><span class="tally-label ok">승인</span><span id="countOk">0</span></div>
+        <div class="tally-row"><span class="tally-label ng">연행</span><span id="countNg">0</span></div>
+        <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true" title="효과음 켜기/끄기">♪ ON</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+
+      <!-- 왼쪽: 심사 부스 -->
+      <section class="booth" aria-label="심사 부스">
+        <div class="booth-wall">
+          <div class="height-ruler" aria-hidden="true"></div>
+          <div class="applicant" id="applicant">
+            <div class="shutter" id="shutter"><span>CLOSED</span></div>
+            <div class="worker" aria-hidden="true">
+              <canvas id="portrait" width="40" height="40"></canvas>
+              <span class="logo hat-logo">SAMSUNG</span>
+              <span class="logo chest-logo">SAMSUNG</span>
+              <span class="nametag"><small id="tagDept"></small><b id="tagName"></b></span>
+            </div>
+            <canvas class="guard left" id="guardLeft" width="20" height="40" aria-hidden="true"></canvas>
+            <canvas class="guard right" id="guardRight" width="20" height="40" aria-hidden="true"></canvas>
+          </div>
+          <div class="speech" id="speech" data-who="inspector" aria-live="polite"><span class="who">검사관</span><span class="line">다음 작업자를 불러주세요.</span></div>
+        </div>
+        <div class="counter">
+          <button class="intercom" id="nextBtn" type="button">
+            <span class="intercom-grill" aria-hidden="true"></span>
+            <span class="intercom-label">NEXT!</span>
+            <span class="intercom-sub">사진 선택</span>
+          </button>
+          <div class="clock" id="clock">00:00</div>
+        </div>
+      </section>
+
+      <!-- 오른쪽: 책상 (드롭존) -->
+      <section class="desk" id="desk" aria-label="검사 책상">
+        <div class="stamp-bar" id="stampBar" aria-hidden="true">
+          <div class="stamp-unit denied" id="stampDenied">
+            <div class="stamp-knob"></div>
+            <div class="stamp-plate">DENIED</div>
+          </div>
+          <div class="stamp-unit approved" id="stampApproved">
+            <div class="stamp-knob"></div>
+            <div class="stamp-plate">APPROVED</div>
+          </div>
+          <div class="stamp-bar-caption">판정에 따라 자동으로 도장이 찍힙니다</div>
+        </div>
+
+        <div class="doc-slot" id="docSlot">
+          <div class="desk-empty" id="deskEmpty">
+            <div class="desk-empty-box">
+              <strong>검사할 사진을 이곳에 끌어다 놓으세요</strong>
+              <span>또는 NEXT! 버튼 / Ctrl+V 붙여넣기</span>
+              <span class="desk-empty-sub">JPG · PNG · 최대 20MB · 한 번에 1장</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="drop-overlay" id="dropOverlay"><span>여기에 놓기</span></div>
+      </section>
+    </main>
+
+    <div class="alarm-banner" aria-hidden="true">⚠ 경보 · 불량 작업자 연행 중 ⚠</div>
+
+    <!-- 하단: 오늘의 검사 기록 -->
+    <footer class="ledger">
+      <span class="ledger-title">검사 기록</span>
+      <ol class="ledger-list" id="ledger"></ol>
+    </footer>
+  </div>
+
+  <div class="day-screen" id="dayScreen" hidden></div>
+
+  <input type="file" id="fileInput" accept="image/jpeg,image/png,image/bmp" hidden>
+
+  <template id="permitTemplate">
+    <article class="permit">
+      <header class="permit-head">
+        <span class="permit-title">도장 검사 서류</span>
+        <span class="permit-no"></span>
+      </header>
+      <div class="permit-body">
+        <div class="permit-photo">
+          <div class="photo-frame">
+            <img alt="검사 대상 사진">
+            <div class="defect-box" hidden>
+              <span class="defect-tag">DISCREPANCY DETECTED</span>
+            </div>
+          </div>
+        </div>
+        <div class="permit-side">
+          <dl class="permit-fields">
+            <dt>제출자</dt><dd class="f-worker"></dd>
+            <dt>소속</dt><dd class="f-dept"></dd>
+            <dt>블록</dt><dd class="f-block"></dd>
+            <dt>파일명</dt><dd class="f-name"></dd>
+            <dt>해상도</dt><dd class="f-res">-</dd>
+            <dt>용량</dt><dd class="f-size"></dd>
+            <dt>접수</dt><dd class="f-time"></dd>
+          </dl>
+          <div class="permit-probs">
+            <div class="probs-title">판정 확률</div>
+            <ul class="probs-list"></ul>
+          </div>
+        </div>
+      </div>
+      <footer class="permit-foot">
+        <div class="verdict-line">판정: <span class="verdict-text">검사 중</span></div>
+        <div class="stamp-zone"><span class="stamp-zone-label">STAMP HERE</span></div>
+      </footer>
+      <div class="stamp-mark" hidden></div>
+    </article>
+  </template>
+
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/ort.min.js"></script>
+  <script src="inspector.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
